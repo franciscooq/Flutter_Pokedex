@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_pokedex/consts/consts_app.dart';
+import 'package:flutter_pokedex/models/pokeapi.dart';
+import 'package:flutter_pokedex/stores/pokeapi_store.dart';
 
 import 'app_bar_home.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  PokeApiStore pokeApiStore;
+
+  @override
+  void initState() {
+    super.initState();
+    pokeApiStore = PokeApiStore();
+    pokeApiStore.fetchPokemonList();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -35,39 +52,22 @@ class HomePage extends StatelessWidget {
                 AppBarHome(),
                 Expanded(
                   child: Container(
-                    child: ListView(
-                      children: <Widget>[
-                        ListTile(
-                          title: Text('Pokemon 1'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 2'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 3'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 4'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 5'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 6'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 7'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 8'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 9'),
-                        ),
-                        ListTile(
-                          title: Text('Pokemon 10'),
-                        ),
-                      ],
+                    child: Observer(
+                      name: 'ListaHomePage',
+                      builder: (BuildContext context) {
+                        PokeAPI _pokeApi = pokeApiStore.pokeAPI;
+                        return (_pokeApi != null)
+                            ? ListView.builder(
+                                itemCount: _pokeApi.pokemon.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(_pokeApi.pokemon[index].name),
+                                  );
+                                })
+                            : Center(
+                                child: CircularProgressIndicator(),
+                              );
+                      },
                     ),
                   ),
                 ),

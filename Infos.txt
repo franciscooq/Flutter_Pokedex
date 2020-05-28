@@ -1,0 +1,13 @@
+https://raw.githubusercontent.com/Biuni/PokemonGO-Pokedex/master/pokedex.json
+
+https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images
+
+
+# - Cria o arquivo mobx.g
+flutter packages pub run build_runner build
+
+# - Fica assistindo as alterações
+flutter packages pub run build_runner watch
+
+json to dart
+https://javiercbk.github.io/json_to_dart/
