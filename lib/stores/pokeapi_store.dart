@@ -42,6 +42,16 @@ abstract class _PokeApiStoreBase with Store {
     );
   }
 
+  @action
+  setPokemonAtual({int index}){
+    return _pokeAPI.pokemon[index];
+  }
+
+  @action
+  getPokeonAtual({int index}){
+    return _pokeAPI.pokemon[index];
+  }
+
   Future<PokeAPI> loadPokeAPI() async {
     try {
       final response = await http.get(ConstsAPI.pokeApiURL);
