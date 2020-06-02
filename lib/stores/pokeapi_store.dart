@@ -15,8 +15,14 @@ abstract class _PokeApiStoreBase with Store {
   @observable
   PokeAPI _pokeAPI;
 
+  @observable
+  Pokemon _pokemonCurrent;
+
   @computed
   PokeAPI get pokeAPI => _pokeAPI;
+
+  @computed
+  Pokemon get pokemonCurrent => _pokemonCurrent;
 
   @action
   fetchPokemonList() {
@@ -32,6 +38,11 @@ abstract class _PokeApiStoreBase with Store {
   }
 
   @action
+  setPokemonCurrent({int index}) {
+    _pokemonCurrent = _pokeAPI.pokemon[index];
+  }
+
+  @action
   Widget getImage({String number}) {
     return CachedNetworkImage(
       placeholder: (context, url) => new Container(
@@ -40,16 +51,6 @@ abstract class _PokeApiStoreBase with Store {
       imageUrl:
           'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$number.png',
     );
-  }
-
-  @action
-  setPokemonAtual({int index}){
-    return _pokeAPI.pokemon[index];
-  }
-
-  @action
-  getPokeonAtual({int index}){
-    return _pokeAPI.pokemon[index];
   }
 
   Future<PokeAPI> loadPokeAPI() async {
