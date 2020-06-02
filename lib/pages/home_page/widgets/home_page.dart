@@ -6,20 +6,30 @@ import 'package:flutter_pokedex/pages/home_page/widgets/poke_item.dart';
 import 'package:flutter_pokedex/pages/poke_detail/poke_detail_page.dart';
 import 'package:flutter_pokedex/stores/pokeapi_store.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 import 'app_bar_home.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   PokeApiStore _pokeApiStore;
 
   @override
-  Widget build(BuildContext context) {
-    _pokeApiStore = Provider.of<PokeApiStore>(context);
+  void initState() {
+    super.initState();
+    _pokeApiStore = GetIt.instance<PokeApiStore>();
+
     if (_pokeApiStore.pokeAPI == null) {
       _pokeApiStore.fetchPokemonList();
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double statusWidth = MediaQuery.of(context).padding.top;
 
@@ -85,7 +95,8 @@ class HomePage extends StatelessWidget {
                                             ),
                                           ),
                                           onTap: () {
-                                            _pokeApiStore.setPokemonCurrent(index: index);
+                                            _pokeApiStore.setPokemonCurrent(
+                                                index: index);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
