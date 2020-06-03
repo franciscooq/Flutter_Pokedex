@@ -21,6 +21,9 @@ abstract class _PokeApiStoreBase with Store {
   @observable
   Color pokemonColor;
 
+  @observable
+  int currentPosition;
+
   @computed
   PokeAPI get pokeAPI => _pokeAPI;
 
@@ -43,14 +46,16 @@ abstract class _PokeApiStoreBase with Store {
   setPokemonCurrent({int index}) {
     _pokemonCurrent = _pokeAPI.pokemon[index];
     pokemonColor = ConstsAPI.getColorType(type: _pokemonCurrent.type[0]);
+    currentPosition = index;
   }
 
   @action
-  Widget getImage({String number}) {
+  Widget getImage({String number, int index}) {
     return CachedNetworkImage(
       placeholder: (context, url) => new Container(
         color: Colors.transparent,
       ),
+      color: index == currentPosition ? null : Colors.black.withOpacity(0.7),
       imageUrl:
           'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$number.png',
     );

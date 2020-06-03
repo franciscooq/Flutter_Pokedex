@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_pokedex/consts/consts_api.dart';
+import 'package:flutter_pokedex/consts/consts_app.dart';
 import 'package:flutter_pokedex/models/pokeapi.dart';
 import 'package:flutter_pokedex/stores/pokeapi_store.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 class PokeDetailPage extends StatefulWidget {
   final int index;
@@ -19,6 +20,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
   PageController _pageController;
   Pokemon _pokemon;
   PokeApiStore _pokeApiStore;
+  MultiTrackTween _pokeAnimation;
 
   @override
   void initState() {
@@ -27,6 +29,14 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
     _pageController = PageController(initialPage: widget.index);
     _pokeApiStore = GetIt.instance<PokeApiStore>();
     _pokemon = _pokeApiStore.pokemonCurrent;
+
+    _pokeAnimation = MultiTrackTween([
+      Track("rotationPokeball").add(
+        Duration(seconds: 7),
+        Tween(begin: 0.0, end: 6.0),
+        curve: Curves.linear,
+      )
+    ]);
   }
 
   @override
@@ -80,7 +90,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
           ),
           SlidingSheet(
             elevation: 0,
-            cornerRadius: 16,
+            cornerRadius: 30,
             snapSpec: const SnapSpec(
               snap: true,
               snappings: [0.7, 1.0],
@@ -94,10 +104,10 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 10,
+              top: 15,
             ),
             child: SizedBox(
-              height: 220,
+              height: 215,
               child: PageView.builder(
                 controller: _pageController,
                 onPageChanged: (index) {
@@ -105,9 +115,41 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
                 },
                 itemCount: _pokeApiStore.pokeAPI.pokemon.length,
                 itemBuilder: (BuildContext context, int inxBuilder) {
-                  Pokemon _pokeItem = _pokeApiStore.getPokemon(index: inxBuilder);
-                  return _pokeApiStore.getImage(
-                      number: _pokeItem.num);
+                  Pokemon _pokeItem =
+                      _pokeApiStore.getPokemon(index: inxBuilder);
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      ControlledAnimation(
+                          playback: Playback.LOOP,
+                          duration: _pokeAnimation.duration,
+                          tween: _pokeAnimation,
+                          builder: (context, animation) {
+                            return Transform.rotate(
+                              angle: animation['rotationPokeball'],
+                              child: Hero(
+                                tag: inxBuilder.toString(),
+                                child: Opacity(
+                                  opacity: 0.2,
+                                  child: Image.asset(
+                                    ConstsApp.whitePokeball,
+                                    height: 300,
+                                    width: 300,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                      Observer(builder: (context) {
+                        return AnimatedPadding(
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.bounceInOut,
+                          padding: EdgeInsets.all(inxBuilder == _pokeApiStore.currentPosition ? 0 : 60),
+                          child: _pokeApiStore.getImage(number: _pokeItem.num, index: inxBuilder)
+                        );
+                      }),
+                    ],
+                  );
                 },
               ),
             ),
