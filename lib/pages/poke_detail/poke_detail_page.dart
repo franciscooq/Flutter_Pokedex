@@ -102,56 +102,58 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
               );
             },
           ),
-          Padding(
-            padding: EdgeInsets.only(
-              top: 15,
-            ),
-            child: SizedBox(
-              height: 215,
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  _pokeApiStore.setPokemonCurrent(index: index);
-                },
-                itemCount: _pokeApiStore.pokeAPI.pokemon.length,
-                itemBuilder: (BuildContext context, int inxBuilder) {
-                  Pokemon _pokeItem =
-                      _pokeApiStore.getPokemon(index: inxBuilder);
-                  return Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      ControlledAnimation(
-                          playback: Playback.LOOP,
-                          duration: _pokeAnimation.duration,
-                          tween: _pokeAnimation,
-                          builder: (context, animation) {
-                            return Transform.rotate(
-                              angle: animation['rotationPokeball'],
-                              child: Hero(
-                                tag: inxBuilder.toString(),
-                                child: Opacity(
-                                  opacity: 0.2,
-                                  child: Image.asset(
-                                    ConstsApp.whitePokeball,
-                                    height: 300,
-                                    width: 300,
-                                  ),
-                                ),
+          SizedBox(
+            height: 250,
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                _pokeApiStore.setPokemonCurrent(index: index);
+              },
+              itemCount: _pokeApiStore.pokeAPI.pokemon.length,
+              itemBuilder: (BuildContext context, int inxBuilder) {
+                Pokemon _pokeItem = _pokeApiStore.getPokemon(index: inxBuilder);
+                return Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    ControlledAnimation(
+                        playback: Playback.LOOP,
+                        duration: _pokeAnimation.duration,
+                        tween: _pokeAnimation,
+                        builder: (context, animation) {
+                          return Transform.rotate(
+                            angle: animation['rotationPokeball'],
+                            child: Opacity(
+                              opacity: 0.2,
+                              child: Image.asset(
+                                ConstsApp.whitePokeball,
+                                height: 300,
+                                width: 300,
                               ),
-                            );
-                          }),
-                      Observer(builder: (context) {
-                        return AnimatedPadding(
+                            ),
+                          );
+                        }),
+                    Observer(builder: (context) {
+                      return AnimatedPadding(
                           duration: Duration(milliseconds: 300),
                           curve: Curves.bounceInOut,
-                          padding: EdgeInsets.all(inxBuilder == _pokeApiStore.currentPosition ? 0 : 60),
-                          child: _pokeApiStore.getImage(number: _pokeItem.num, index: inxBuilder)
-                        );
-                      }),
-                    ],
-                  );
-                },
-              ),
+                          padding: EdgeInsets.all(
+                              inxBuilder == _pokeApiStore.currentPosition
+                                  ? 0
+                                  : 60),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 50,
+                            ),
+                            child: Hero(
+                              tag: _pokeItem.name,
+                              child: _pokeApiStore.getImage(
+                                  number: _pokeItem.num, index: inxBuilder),
+                            ),
+                          ));
+                    }),
+                  ],
+                );
+              },
             ),
           ),
         ],

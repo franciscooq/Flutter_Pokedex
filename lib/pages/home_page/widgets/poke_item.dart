@@ -22,43 +22,48 @@ class PokeItem extends StatelessWidget {
           padding: const EdgeInsets.all(4),
           child: Stack(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 8, top: 6),
-                child: Text(
-                  name,
-                  style: TextStyle(
-                    fontFamily: 'Google',
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 8,
-                  top: 30,
-                ),
-                child: setTipos(),
-              ),
               Align(
                 alignment: Alignment.topCenter,
-                child: Hero(
-                  tag: index.toString(),
-                  child: Opacity(
-                    opacity: 0.2,
-                    child: Image.asset(
-                      ConstsApp.whitePokeball,
-                      height: 150,
-                      width: 150,
-                    ),
+                child: Opacity(
+                  opacity: 0.2,
+                  child: Image.asset(
+                    ConstsApp.whitePokeball,
+                    height: 150,
+                    width: 150,
                   ),
                 ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 6),
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        fontFamily: 'Google',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8,
+                      top: 30,
+                    ),
+                    child: setTipos(),
+                  )
+                ],
               ),
               Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
-                  child: image,
+                  child: Hero(
+                    tag: name,
+                    child: image,
+                  ),
                   height: 100,
                   width: 100,
                 ),
