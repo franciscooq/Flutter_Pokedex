@@ -30,7 +30,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
   void initState() {
     super.initState();
 
-    _pageController = PageController(initialPage: widget.index);
+    _pageController = PageController(initialPage: widget.index, viewportFraction: 0.5);
     _pokeApiStore = GetIt.instance<PokeApiStore>();
     _pokemon = _pokeApiStore.pokemonCurrent;
 
@@ -59,95 +59,121 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: Observer(
-          builder: (BuildContext context) {
-            return AppBar(
-              elevation: 0,
-              backgroundColor: _pokeApiStore.pokemonColor,
-              centerTitle: true,
-              title: Opacity(
-                opacity: _opacityTitleAppBar,
-                child: Text(
-                  _pokeApiStore.pokemonCurrent.name,
-                  style: TextStyle(
-                    fontFamily: 'Google',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 21,
-                  ),
-                ),
-              ),
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              actions: <Widget>[
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      ControlledAnimation(
-                          playback: Playback.LOOP,
-                          duration: _pokeAnimation.duration,
-                          tween: _pokeAnimation,
-                          builder: (context, animation) {
-                            return Transform.rotate(
-                              angle: animation['rotationPokeball'],
-                              child: Opacity(
-                                opacity: _opacityTitleAppBar <= 0.2 ? 0.2 : 0,
-                                child: Image.asset(
-                                  ConstsApp.whitePokeball,
-                                  height: 50,
-                                  width: 50,
-                                ),
-                              ),
-                            );
-                          }),
-                      IconButton(
-                        icon: Icon(Icons.favorite_border),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
       body: Stack(
         children: <Widget>[
           Observer(
             builder: (context) {
-              return Container(
+              return AnimatedContainer(
+                child: Stack(
+                  children: <Widget>[
+                    AppBar(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      centerTitle: true,
+                      leading: IconButton(
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      actions: <Widget>[
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              ControlledAnimation(
+                                  playback: Playback.LOOP,
+                                  duration: _pokeAnimation.duration,
+                                  tween: _pokeAnimation,
+                                  builder: (context, animation) {
+                                    return Transform.rotate(
+                                      angle: animation['rotationPokeball'],
+                                      child: Opacity(
+                                        opacity: _opacityTitleAppBar <= 0.2
+                                            ? 0.2
+                                            : 0,
+                                        child: Image.asset(
+                                          ConstsApp.whitePokeball,
+                                          height: 40,
+                                          width: 40,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                              IconButton(
+                                icon: Icon(Icons.favorite_border),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      top: MediaQuery.of(context).size.height * 0.05,
+                      left: MediaQuery.of(context).size.width / 3.0,
+                      width: MediaQuery.of(context).size.width,
+                      child: Text(
+                        _pokeApiStore.pokemonCurrent.name,
+                        style: TextStyle(
+                            fontFamily: 'Google',
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                    Positioned(
+                      top: MediaQuery.of(context).size.height * 0.09,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 15, right: 20, top: 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              setTiposDetalhe(
+                                  _pokeApiStore.pokemonCurrent.type),
+                              Text(
+                                '#' +
+                                    _pokeApiStore.pokemonCurrent.num.toString(),
+                                style: TextStyle(
+                                    fontFamily: 'Google',
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                height: MediaQuery.of(context).size.height / 3,
+                duration: Duration(milliseconds: 300),
                 color: _pokeApiStore.pokemonColor,
               );
             },
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height / 3,
           ),
           SlidingSheet(
             listener: (state) {
               setState(() {
                 _progress = state.progress;
-                _multiple = 1 - interval(0.0, 0.9, _progress);
+                _multiple = 1 - interval(0.0, 0.89, _progress);
                 _opacity = _multiple;
                 _opacityTitleAppBar =
-                    _multiple = interval(0.55, 0.8, _progress);
+                    _multiple = interval(0.55, 0.89, _progress);
               });
             },
             elevation: 0,
             cornerRadius: 30,
             snapSpec: const SnapSpec(
               snap: true,
-              snappings: [0.7, 1.0],
+              snappings: [0.7, 0.89],
               positioning: SnapPositioning.relativeToAvailableSpace,
             ),
             builder: (context, state) {
@@ -184,8 +210,8 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
                                   opacity: 0.2,
                                   child: Image.asset(
                                     ConstsApp.whitePokeball,
-                                    height: 300,
-                                    width: 300,
+                                    height: 200,
+                                    width: 200,
                                   ),
                                 ),
                               );
@@ -215,7 +241,10 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
                 ),
               ),
               padding: EdgeInsets.only(
-                  top: _opacityTitleAppBar == 1 ? 1000 : 60 - _progress * 50),
+                  top: _opacityTitleAppBar == 1
+                      ? 1000
+                      : (MediaQuery.of(context).size.height * 0.12) -
+                          _progress * 50),
             ),
           ),
         ],
@@ -233,7 +262,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
             Container(
               padding: EdgeInsets.all(0),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(10),
                   color: Color.fromARGB(80, 255, 255, 255)),
               child: Padding(
                 padding: const EdgeInsets.all(6.0),
