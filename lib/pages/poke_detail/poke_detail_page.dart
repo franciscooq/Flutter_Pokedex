@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_pokedex/consts/consts_app.dart';
 import 'package:flutter_pokedex/models/pokeapi.dart';
+import 'package:flutter_pokedex/pages/about_page/about_page.dart';
 import 'package:flutter_pokedex/stores/pokeapi_store.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
@@ -30,7 +31,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
   void initState() {
     super.initState();
 
-    _pageController = PageController(initialPage: widget.index, viewportFraction: 0.5);
+    _pageController = PageController(initialPage: widget.index);
     _pokeApiStore = GetIt.instance<PokeApiStore>();
     _pokemon = _pokeApiStore.pokemonCurrent;
 
@@ -64,6 +65,10 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
           Observer(
             builder: (context) {
               return AnimatedContainer(
+                decoration: BoxDecoration(gradient: LinearGradient(colors:[
+                  _pokeApiStore.pokemonColor.withOpacity(0.8),
+                  _pokeApiStore.pokemonColor,
+                ])),
                 child: Stack(
                   children: <Widget>[
                     AppBar(
@@ -155,7 +160,6 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
                 ),
                 height: MediaQuery.of(context).size.height / 3,
                 duration: Duration(milliseconds: 300),
-                color: _pokeApiStore.pokemonColor,
               );
             },
           ),
@@ -178,7 +182,8 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
             ),
             builder: (context, state) {
               return Container(
-                height: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height * 0.05,
+                child: AboutPage(),
               );
             },
           ),
@@ -243,7 +248,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
               padding: EdgeInsets.only(
                   top: _opacityTitleAppBar == 1
                       ? 1000
-                      : (MediaQuery.of(context).size.height * 0.12) -
+                      : (MediaQuery.of(context).size.height * 0.08) -
                           _progress * 50),
             ),
           ),
