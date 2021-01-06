@@ -4,6 +4,7 @@ import 'package:flutter_pokedex/consts/consts_app.dart';
 import 'package:flutter_pokedex/models/pokeapi.dart';
 import 'package:flutter_pokedex/pages/about_page/about_page.dart';
 import 'package:flutter_pokedex/stores/pokeapi_store.dart';
+import 'package:flutter_pokedex/stores/pokeapiv2_store.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -21,6 +22,7 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
   PageController _pageController;
   Pokemon _pokemon;
   PokeApiStore _pokeApiStore;
+  PokeApiV2Store _pokeApiV2Store;
   MultiTrackTween _pokeAnimation;
   double _progress = 0;
   double _multiple = 0;
@@ -33,6 +35,11 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
 
     _pageController = PageController(initialPage: widget.index);
     _pokeApiStore = GetIt.instance<PokeApiStore>();
+    _pokeApiV2Store = GetIt.instance<PokeApiV2Store>();
+
+    _pokeApiV2Store.getInfoPokemon(_pokeApiStore.pokemonCurrent.name);
+    _pokeApiV2Store.getInfoSpecie(_pokeApiStore.pokemonCurrent.id.toString());
+
     _pokemon = _pokeApiStore.pokemonCurrent;
 
     _pokeAnimation = MultiTrackTween([
@@ -65,7 +72,8 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
           Observer(
             builder: (context) {
               return AnimatedContainer(
-                decoration: BoxDecoration(gradient: LinearGradient(colors:[
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
                   _pokeApiStore.pokemonColor.withOpacity(0.8),
                   _pokeApiStore.pokemonColor,
                 ])),
@@ -182,7 +190,8 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
             ),
             builder: (context, state) {
               return Container(
-                height: MediaQuery.of(context).size.height - MediaQuery.of(context).size.height * 0.05,
+                height: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).size.height * 0.05,
                 child: AboutPage(),
               );
             },
@@ -196,6 +205,10 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
                   controller: _pageController,
                   onPageChanged: (index) {
                     _pokeApiStore.setPokemonCurrent(index: index);
+                    _pokeApiV2Store
+                        .getInfoPokemon(_pokeApiStore.pokemonCurrent.name);
+                    _pokeApiV2Store.getInfoSpecie(
+                        _pokeApiStore.pokemonCurrent.id.toString());
                   },
                   itemCount: _pokeApiStore.pokeAPI.pokemon.length,
                   itemBuilder: (BuildContext context, int inxBuilder) {
@@ -221,25 +234,30 @@ class _PokeDetailPageState extends State<PokeDetailPage> {
                                 ),
                               );
                             }),
-                        Observer(builder: (context) {
-                          return AnimatedPadding(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.bounceInOut,
-                              padding: EdgeInsets.all(
-                                  inxBuilder == _pokeApiStore.currentPosition
-                                      ? 0
-                                      : 60),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  top: 50,
-                                ),
-                                child: Hero(
-                                  tag: _pokeItem.name,
-                                  child: _pokeApiStore.getImage(
-                                      number: _pokeItem.num, index: inxBuilder),
-                                ),
-                              ));
-                        }),
+                        IgnorePointer(
+                          child: Observer(
+                              name: 'Pokemon',
+                              builder: (context) {
+                                return AnimatedPadding(
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.bounceInOut,
+                                    padding: EdgeInsets.all(inxBuilder ==
+                                            _pokeApiStore.currentPosition
+                                        ? 0
+                                        : 60),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 50,
+                                      ),
+                                      child: Hero(
+                                        tag: _pokeItem.name,
+                                        child: _pokeApiStore.getImage(
+                                            number: _pokeItem.num,
+                                            index: inxBuilder),
+                                      ),
+                                    ));
+                              }),
+                        ),
                       ],
                     );
                   },

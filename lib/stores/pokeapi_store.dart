@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/consts/consts_api.dart';
+import 'package:flutter_pokedex/consts/consts_app.dart';
 import 'package:flutter_pokedex/models/pokeapi.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
@@ -45,7 +46,7 @@ abstract class _PokeApiStoreBase with Store {
   @action
   setPokemonCurrent({int index}) {
     _pokemonCurrent = _pokeAPI.pokemon[index];
-    pokemonColor = ConstsAPI.getColorType(type: _pokemonCurrent.type[0]);
+    pokemonColor = ConstsApp.getColorType(type: _pokemonCurrent.type[0]);
     currentPosition = index;
   }
 
@@ -55,7 +56,7 @@ abstract class _PokeApiStoreBase with Store {
       placeholder: (context, url) => new Container(
         color: Colors.transparent,
       ),
-      color: index == currentPosition ? null : Colors.black.withOpacity(0.7),
+      // color: index == currentPosition ? null : Colors.black.withOpacity(0.7),
       imageUrl:
           'https://raw.githubusercontent.com/fanzeyi/pokemon.json/master/images/$number.png',
     );
