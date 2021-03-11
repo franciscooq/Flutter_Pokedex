@@ -3,10 +3,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_pokedex/models/specie.dart';
 import 'package:flutter_pokedex/pages/about_page/widgets/aba_evolucao.dart';
 import 'package:flutter_pokedex/pages/about_page/widgets/aba_sobre.dart';
+import 'package:flutter_pokedex/pages/about_page/widgets/aba_status.dart';
 import 'package:flutter_pokedex/stores/pokeapi_store.dart';
 import 'package:flutter_pokedex/stores/pokeapiv2_store.dart';
 import 'package:get_it/get_it.dart';
 import 'package:md2_tab_indicator/md2_tab_indicator.dart';
+import 'package:mobx/mobx.dart';
 
 class AboutPage extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class _AboutPageState extends State<AboutPage>
   TabController _tabController;
   PageController _pageController;
   PokeApiStore _pokeApiStore;
+  ReactionDisposer _disposer;
 
   @override
   void initState() {
@@ -25,6 +28,17 @@ class _AboutPageState extends State<AboutPage>
     _tabController = TabController(length: 3, vsync: this);
     _pageController = PageController(initialPage: 0);
     _pokeApiStore = GetIt.instance<PokeApiStore>();
+
+    _disposer = reaction(
+        (f) => _pokeApiStore.pokemonCurrent,
+        (r) => _pageController.animateToPage(0,
+            duration: Duration(milliseconds: 300), curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose(){
+    _disposer();
+    super.dispose();
   }
 
   @override
@@ -80,6 +94,7 @@ class _AboutPageState extends State<AboutPage>
         children: <Widget>[
           AbaSobre(),
           AbaEvolucao(),
+          AbaStatus(),
           Container(
             color: Colors.white,
             child: Padding(

@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_pokedex/components/circluar_progress_about.dart';
 import 'package:flutter_pokedex/models/pokeapi.dart';
-import 'package:flutter_pokedex/models/specie.dart';
 import 'package:flutter_pokedex/stores/pokeapi_store.dart';
-import 'package:flutter_pokedex/stores/pokeapiv2_store.dart';
 import 'package:get_it/get_it.dart';
 
 class AbaEvolucao extends StatelessWidget {
-  final PokeApiV2Store _pokeApiV2Store = GetIt.instance<PokeApiV2Store>();
   final PokeApiStore _pokeApiStore = GetIt.instance<PokeApiStore>();
 
   Widget resizePokemon(Widget pokemonImage) {
